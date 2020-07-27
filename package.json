@@ -1,0 +1,28 @@
+{
+  "name": "recogito-web-annotation-adapter",
+  "version": "0.1.0",
+  "description": "Adapter for connecting RecogitoJS to Web Annotation LDP containers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falafeljan/recogito-web-annotation-adapter.git"
+  },
+  "keywords": [
+    "annotation",
+    "web-annotation",
+    "recogito",
+    "recogito-js"
+  ],
+  "author": "Jan Kaßel <jan@kassel.works>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/falafeljan/recogito-web-annotation-adapter/issues"
+  },
+  "homepage": "https://github.com/falafeljan/recogito-web-annotation-adapter#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
+}
