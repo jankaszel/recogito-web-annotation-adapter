@@ -1,6 +1,4 @@
-const fetch = require('node-fetch')
 const RecogitoAdapter = require('./adapter')
-const Headers = fetch.Headers
 
 async function fetchAnnotations (containerUrl) {
   const container = await (await fetch(containerUrl)).json()
