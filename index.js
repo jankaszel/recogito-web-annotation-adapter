@@ -1,22 +1,5 @@
 const RecogitoAdapter = require('./adapter')
 
-async function fetchAnnotations (containerUrl) {
-  const container = await (await fetch(containerUrl)).json()
-  if (!container.first) {
-    return []
-  }
-
-  let collection = []
-  let nextPage = container.first
-  do {
-    const page = await (await fetch(nextPage)).json()
-    collection = collection.concat(page.items)
-    nextPage = page.next
-  } while (nextPage)
-
-  return collection
-}
-
 class WebAnnotationAdapter extends RecogitoAdapter {
   constructor (recogito, targetSource, containerUrl, opts = {}) {
     super(recogito)
@@ -26,13 +9,15 @@ class WebAnnotationAdapter extends RecogitoAdapter {
 
     if (
       typeof opts.authentication === 'object' &&
-      authentication.username &&
-      authentication.password
+      opts.authentication.username &&
+      opts.authentication.password
     ) {
-      this.authentication = () => {
+      this.authentication = (headers) => {
         headers.append(
-          'authorization',
-          btoa(`Basic ${authentication.username}:${authentication.password}`)
+          'Authorization',
+          `Basic ${btoa(
+            `${opts.authentication.username}:${opts.authentication.password}`
+          )}`
         )
         return headers
       }
@@ -43,7 +28,7 @@ class WebAnnotationAdapter extends RecogitoAdapter {
     }
   }
 
-  async _fetch (url, opts) {
+  async _fetch (url, opts = {}) {
     const _headers = new Headers(opts.headers || {})
     const headers = this.authentication
       ? this.authentication(_headers)
@@ -51,12 +36,26 @@ class WebAnnotationAdapter extends RecogitoAdapter {
 
     return fetch(url, {
       ...opts,
+      credentials: this.authentication ? 'include' : 'same-origin',
       headers,
     })
   }
 
   async _getAnnotations () {
-    return await fetchAnnotations(this.containerUrl)
+    const container = await (await this._fetch(this.containerUrl)).json()
+    if (!container.first) {
+      return []
+    }
+
+    let collection = []
+    let nextPage = container.first
+    do {
+      const page = await (await this._fetch(nextPage)).json()
+      collection = collection.concat(page.items)
+      nextPage = page.next
+    } while (nextPage)
+
+    return collection
   }
 
   async createAnnotation (annotation, overrideId) {

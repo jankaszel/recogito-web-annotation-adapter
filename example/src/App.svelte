@@ -1,11 +1,11 @@
 <script>
     import Recogito from '@recogito/recogito-js'
-    import {WebAnnotationAdapter} from '../../'
+    import { WebAnnotationAdapter } from '../../'
     import faust from '../faust.txt'
 
     let content, containerUrl, submitted, r, endpoint
 
-    async function submit(event) {
+    async function submit (event) {
         event.preventDefault()
 
         if (!containerUrl || submitted) {
@@ -16,7 +16,7 @@
             containerUrl = `${containerUrl}/`
         }
 
-        const r = Recogito.init({content});
+        const r = Recogito.init({ content })
         const targetSource = content.getAttribute('data-source')
         const adapter = new WebAnnotationAdapter(r, targetSource, containerUrl)
         adapter.getAnnotations()
@@ -39,11 +39,11 @@
         </form>
     </header>
     <div
-        bind:this={content}
-        class="chapter"
-        class:disabled="{ submitted !== true }"
-        id="faust"
-        data-source="http://localhost:5000/#faust">
+            bind:this={content}
+            class="chapter"
+            class:disabled="{ submitted !== true }"
+            id="faust"
+            data-source="http://localhost:5000/#faust">
         {#each verses as group}
             <p class="group">
                 {#each group as verse}
