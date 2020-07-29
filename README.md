@@ -2,11 +2,23 @@
 
 Proof of concept adapter for connecting the [RecogitoJS annotation library](https://github.com/recogito/recogito-js) to [Web Annotation LDP container storage](https://www.w3.org/TR/annotation-protocol/). This adapter realizes a specification-compliant annotation environment, where users can store their annotations on interoperable LDP resources, decoupled from the annotation application itself.
 
-This repository contains a fully-fledged example for annotating the first chapter of Goethe's _Faust_ in an experimental annotation environment, where users can provide their own Web Annotation container for annotation storage. Run it via `cd ./example && npm install && npm run dev`. More instructions on running a personal annotation server will follow.
+Attaching the adapter to RecogitoJS is straightforward. Complementing a RecogitoJS instance and the annotation container IRI, you will need to provide the adapter with a unique identifier of the annotated resource. The example below uses the [fragment identifier](https://www.w3.org/TR/annotation-model/#fragment-selector) to reference the container node's ID within the document:
+
+```js
+const container = document.getElementById('annotated-text')
+const targetSource = `${window.location}#${container.getAttribute('id')}`
+const containerUrl = 'https://annotations.example.com/foo'
+
+recogito = Recogito.init({ content })
+annotationAdapter = new WebAnnotationAdapter(recogito, targetSource, containerUrl)
+await annotationAdapter.getAnnotations()
+```
+
+[Hyperwell Playground](https://github.com/hyperwell/playground) implements a proof-of-concept annotation environment for annotating the first chapter of Goethe's _Faust_. In this environment, users can supply their own Web Annotation container for annotation storage as well as connect their Hyperwell Notebooks for real-time collaborative editing. [Try it out!](https://playground.hyperwell.org/)
 
 ## API
 
-This library exposes two classes, `WebAnnotationAdapter` and `RecogitoAdapter`. These are detailed in the following.
+This library exposes two classes, `WebAnnotationAdapter` and `RecogitoAdapter`. They are detailed in the following:
 
 #### `adapter = new WebAnnotationAdapter(recogito, targetSource, containerUrl, opts = {})`
 
@@ -16,9 +28,9 @@ Create a new Web Annotation adapter that connects a RecogitoJS instance to a Web
 - `targetSource`: IRI identifying the annotated fragment. This could be an IRI like `http://www.example.com/blog#article1`, where `article1` is the ID of the annotated DOM node.
 - `containerUrl`: URL of the annotation container that will store annotations.
 - Further options in `opts`:
-  - `opts.authentication`: _Optional._ Either an object of `{ username: 'albrecht', password: 'duerer' }` or a function that will receive request headers of type [Headers](https://developer.mozilla.org/en-US/docs/Web/API/Headers), modify these accordingly for the purpose of authentication, and return the Headers object.
+  - `opts.authentication`: _Optional._ Either an object of `{ username: 'name', password: 'pass' }` or a function that will receive request headers of type [Headers](https://developer.mozilla.org/en-US/docs/Web/API/Headers), modify these accordingly for the purpose of authentication, and return the Headers object.
 
-#### `adapter.getAnnotations()`
+#### `async adapter.getAnnotations()`
 
 Retrieve all annotations from the specified annotation container and pass them on to the respective RecogitoJS instance.
 
@@ -29,4 +41,3 @@ An **abstract interface** for implementing various types of storage adapters for
 ## LICENSE
 
 MIT
-
