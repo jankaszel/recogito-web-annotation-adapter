@@ -9,8 +9,8 @@ npm install recogito-web-annotation-adapter
 Attaching the adapter to RecogitoJS is straightforward. Complementing a RecogitoJS instance and the annotation container IRI, you will need to provide the adapter with a unique identifier of the annotated resource. The example below uses the [fragment identifier](https://www.w3.org/TR/annotation-model/#fragment-selector) to reference the container node's ID within the document:
 
 ```js
-const container = document.getElementById('annotated-text')
-const targetSource = `${window.location}#${container.getAttribute('id')}`
+const content = document.getElementById('annotated-text')
+const targetSource = `${window.location}#${content.getAttribute('id')}`
 const containerUrl = 'https://annotations.example.com/foo'
 
 recogito = Recogito.init({ content })
