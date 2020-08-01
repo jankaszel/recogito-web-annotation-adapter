@@ -40,7 +40,7 @@ Retrieve all annotations from the specified annotation container and pass them o
 
 #### `new RecogitoAdapter(recogito)`
 
-An **abstract interface** for implementing various types of storage adapters for RecogitoJS. `RecogitoAdapter` will wire-up its instance functions to RecogitoJS events, such as `createAnnotation` and serves as foundation for `WebAnnotationAdapter`.
+An **abstract interface** for implementing various types of storage adapters for RecogitoJS. `RecogitoAdapter` will wire-up its instance functions to RecogitoJS events—such as `createAnnotation`—and serves as foundation for `WebAnnotationAdapter`.
 
 ## LICENSE
 
