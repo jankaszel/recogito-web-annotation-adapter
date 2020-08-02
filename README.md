@@ -2,11 +2,15 @@
 
 Proof of concept adapter for connecting the [RecogitoJS annotation library](https://github.com/recogito/recogito-js) to [Web Annotation LDP container storage](https://www.w3.org/TR/annotation-protocol/). This adapter realizes a specification-compliant annotation environment, where users can store their annotations on interoperable LDP resources, decoupled from the annotation application itself.
 
+## Usage
+
+Using [Node.js](https://nodejs.org/), obtain the library via npm:
+
 ```sh
 npm install recogito-web-annotation-adapter
 ```
 
-Attaching the adapter to RecogitoJS is straightforward. Complementing a RecogitoJS instance and the annotation container IRI, you will need to provide the adapter with a unique identifier of the annotated resource. The example below uses the [fragment identifier](https://www.w3.org/TR/annotation-model/#fragment-selector) to reference the container node's ID within the document:
+Attaching the adapter to RecogitoJS is straightforward. Complementing a RecogitoJS instance and the annotation container IRI, you will need to provide the adapter with a unique identifier of the annotated resource. The example below uses the [fragment identifier](https://www.w3.org/TR/annotation-model/#fragment-selector) such as `http://www.example.com/#content` to reference the container node's ID within the document:
 
 ```js
 const content = document.getElementById('annotated-text')
@@ -17,6 +21,8 @@ recogito = Recogito.init({ content })
 annotationAdapter = new WebAnnotationAdapter(recogito, targetSource, containerUrl)
 await annotationAdapter.getAnnotations()
 ```
+
+The library doesn't bear any dependencies at this point, but relies on the well-supported [fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). If you target an audience with older browsers, please provide a polyfill for fetch such as [unfetch](https://github.com/developit/unfetch).
 
 [Hyperwell Playground](https://github.com/hyperwell/playground) implements a proof-of-concept annotation environment for annotating the first chapter of Goethe's _Faust_. In this environment, users can supply their own Web Annotation container for annotation storage as well as connect their Hyperwell Notebooks for real-time collaborative editing. [Try it out!](https://playground.hyperwell.org/)
 
