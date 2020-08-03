@@ -1,31 +1,32 @@
 const RecogitoAdapter = require('./adapter')
 
+function wrapAuthentication (authentication) {
+  if (
+    typeof authentication === 'object' &&
+    authentication.username &&
+    authentication.password
+  ) {
+    return (headers) => {
+      headers.append(
+        'Authorization',
+        `Basic ${btoa(`${authentication.username}:${authentication.password}`)}`
+      )
+      return headers
+    }
+  } else if (typeof authentication === 'function') {
+    return authentication
+  } else {
+    return null
+  }
+}
+
 class WebAnnotationAdapter extends RecogitoAdapter {
   constructor (recogito, targetSource, containerUrl, opts = {}) {
     super(recogito)
 
     this.targetSource = targetSource
     this.containerUrl = containerUrl
-
-    if (
-      typeof opts.authentication === 'object' &&
-      opts.authentication.username &&
-      opts.authentication.password
-    ) {
-      this.authentication = (headers) => {
-        headers.append(
-          'Authorization',
-          `Basic ${btoa(
-            `${opts.authentication.username}:${opts.authentication.password}`
-          )}`
-        )
-        return headers
-      }
-    } else if (typeof opts.authentication === 'function') {
-      this.authentication = opts.authentication
-    } else {
-      this.authentication = null
-    }
+    this.authentication = wrapAuthentication(opts.authentication)
   }
 
   async _fetch (url, opts = {}) {
@@ -42,7 +43,12 @@ class WebAnnotationAdapter extends RecogitoAdapter {
   }
 
   async _getAnnotations () {
-    const container = await (await this._fetch(this.containerUrl)).json()
+    const containerRes = await this._fetch(this.containerUrl, {
+      headers: {
+        'accept': 'application/ld+json; profile="http://www.w3.org/ns/anno.jsonld"'
+      }
+    })
+    const container = await containerRes.json()
     if (!container.first) {
       return []
     }
@@ -50,7 +56,12 @@ class WebAnnotationAdapter extends RecogitoAdapter {
     let collection = []
     let nextPage = container.first
     do {
-      const page = await (await this._fetch(nextPage)).json()
+      const pageRes = await this._fetch(nextPage, {
+        headers: {
+          'accept': 'application/ld+json; profile="http://www.w3.org/ns/anno.jsonld"'
+        }
+      })
+      const page = await pageRes.json()
       collection = collection.concat(page.items)
       nextPage = page.next
     } while (nextPage)
